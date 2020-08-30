@@ -1,0 +1,22 @@
+{
+  "token": "",
+  "extensions": [
+    "bot.cogs.staff",
+    "bot.cogs.visual_novels"
+  ],
+  "prefixes": [
+    "vn."
+  ],
+  "roles": {
+    "staff": 709761292088508468
+  },
+  "guild_id": 709761292084183100,
+  "channels": {
+    "vn_list": 709761292709396618,
+    "vn_undetermined": 709761292709396619,
+    "vn_news": 709761292709396617,
+    "logs": 736339425054818356,
+    "bot_spam": 709761292709396615
+  },
+  "database": "database/database.json"
+}
