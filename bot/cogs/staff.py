@@ -72,6 +72,13 @@ class Staff(commands.Cog):
             f"{ctx.author.display_name} bonked user {member.display_name} <:bonk:711145599009030204>"
         )
 
+    @commands.command()
+    async def megabonk(self, ctx: commands.Context, member: discord.Member):
+        """Megabonks another person."""
+        await ctx.send(
+            f"{ctx.author.display_name} megabonked user {member.display_name} <:bonk:711145599009030204>"
+        )
+
     @commands.command(name="reload")
     async def _reload(self, ctx, *, ext: str = None):
         """Reloads a module. Can only be used by the staff."""

@@ -38,10 +38,11 @@ class FVNBot(commands.Bot):
         self.guild = self.get_guild(self.config["guild_id"])
 
         self.channels = {
-            "logs": self.guild.get_channel(self.config["channels"]["logs"]),
             "vn_list": self.guild.get_channel(self.config["channels"]["vn_list"]),
             "vn_undetermined": self.guild.get_channel(self.config["channels"]["vn_undetermined"]),
             "vn_news": self.guild.get_channel(self.config["channels"]["vn_news"]),
+            "top10": self.guild.get_channel(self.config["channels"]["top10"]),
+            "logs": self.guild.get_channel(self.config["channels"]["logs"]),
             "bot_spam": self.guild.get_channel(self.config["channels"]["bot_spam"]),
         }
 

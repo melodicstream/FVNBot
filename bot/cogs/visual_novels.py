@@ -1,8 +1,9 @@
 import asyncio
+from collections import Counter
 
 import discord
 from discord.ext import commands
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, Query, where
 
 from bot import FVNBot
 from bot.helpers import VisualNovel, TABLE_VISUAL_NOVEL, TABLE_RATING
@@ -208,13 +209,37 @@ class VisualNovels(commands.Cog):
         """Shows the list of all the VNs that the member voted for.
         If not given any member, it shows the list of whoever called the command.
         """
-        pass
+
+        member = member or ctx.author
+
+        upvoted = []
+        downvoted = []
+
+        for doc in self.db.table(TABLE_RATING).search(where("member_id") == member.id):
+            name = self.db.table(TABLE_RATING).get(doc_id=doc["vn_id"])["name"]
+            if doc["rating"] == 1:
+                upvoted.append(f"{name}")
+            else:
+                downvoted.append(f"{name}\n")
+
+        message = "```Upvoted```\n{}\n```Downvoted```\n{}".format("\n".join(upvoted), "\n".join(downvoted))
+
+        await ctx.send(message)
 
     @commands.command()
     @commands.check(check_is_staff)
     async def cleanleavers(self, ctx: commands.Context, member: discord.Member):
         """Removes the votes from people that aren't in the server anymore."""
-        pass
+
+        to_remove = [
+            document["member_id"]
+            for document in self.db.table(TABLE_RATING).all()
+            if not self.bot.guild.get_member(document["member_id"])
+        ]
+
+        self.db.table(TABLE_RATING).remove(doc_ids=to_remove)
+
+        await ctx.send(f"{len(to_remove)} leavers removed from the votes! Don't forget to run the `rebuild` command.")
 
     @commands.command()
     @commands.check(check_is_staff)
@@ -223,7 +248,18 @@ class VisualNovels(commands.Cog):
         Generates a list of the top 10 VNs in absolute ranks (ups minus downs), clears the top 10 channel and posts the
         new VNs in the channel, sorted by rating.
         """
-        pass
+
+        return await ctx.send("Currently unimplemented.")
+
+        counter = Counter()
+
+        for doc in self.db.table(TABLE_RATING).all():
+            counter[doc["vn_id"]] += doc["rating"]
+
+        top_10 = counter.most_common(10)
+
+        for vn_id, rating in top_10:
+            pass
 
     @commands.command()
     @commands.check(check_is_staff)
@@ -271,8 +307,10 @@ class VisualNovels(commands.Cog):
         embed.add_field(name="Current Ratings", value=vn.calculate_ratings())
         embed.add_field(name="Abbreviations", value=", ".join(vn.abbreviations))
         embed.add_field(name="Android Support", value="Yes" if vn.android_support else "No")
-        embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
-        embed.set_footer(text=f"Brought to you by Furry Visual Novels server. Join us for vn-lists, development channels and more. discord.gg/GFjSPkh")
+        embed.set_author(name="FVN Bot",
+                         icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
+        embed.set_footer(
+            text=f"Brought to you by Furry Visual Novels server. Join us for vn-lists, development channels and more. discord.gg/GFjSPkh")
 
         await self.bot.channels["vn_news"].send("<@&622819741702160387>", embed=embed)
 
