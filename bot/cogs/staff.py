@@ -36,6 +36,11 @@ class Staff(commands.Cog):
         await channel.send("https://github.com/melodicstream/FVNBot")
 
     @commands.command()
+    async def source(self, ctx: commands.Context, channel: discord.TextChannel, *, message: str):
+        """This is the link for the database backlup!"""
+        await channel.send("https://github.com/melodicstream/FVNBot-backup")
+
+    @commands.command()
     async def cleanup(self, ctx: commands.Context, limit=None):
         """Deletes the bot's messages for cleanup.
         You can specify how many messages to look for.

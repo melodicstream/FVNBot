@@ -141,7 +141,7 @@ class VisualNovel:
             vns = self.db.table(TABLE_VISUAL_NOVEL).search(VN.message_id == message_id)
 
         if name:
-            vns = self.db.table(TABLE_VISUAL_NOVEL).search(VN.name.matches(name, flags=re.IGNORECASE))
+            vns = self.db.table(TABLE_VISUAL_NOVEL).search(VN.name.test(lambda s: s.lower() == name.lower()))
 
         if abbreviations:
             vns = self.db.table(TABLE_VISUAL_NOVEL).search(VN.abbreviations.any(abbreviations))
