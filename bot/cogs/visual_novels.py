@@ -200,9 +200,9 @@ class VisualNovels(commands.Cog):
                 if user.id == shin_id:
                     continue
                 query = (Rating.member_id == user.id) & (Rating.vn_id == vn.doc_id)
-                if reaction.emoji.name == "👍":
+                if reaction.emoji == "👍":
                     self.db.table(TABLE_RATING).upsert({"member_id": user.id, "vn_id": vn.doc_id, "rating": 1}, query)
-                if reaction.emoji.name == "👎":
+                if reaction.emoji == "👎":
                     self.db.table(TABLE_RATING).upsert({"member_id": user.id, "vn_id": vn.doc_id, "rating": -1}, query)
 
         await ctx.send("VN's votes successfully migrated.")
