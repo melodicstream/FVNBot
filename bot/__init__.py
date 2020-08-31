@@ -67,7 +67,7 @@ class FVNBot(commands.Bot):
             await ctx.send(str(error))
         if isinstance(error, commands.CheckFailure):
             await self.react_command_error(ctx)
-            if random.random() < 0.1:
+            if random.random() <= 0.25:
                 sarcasm = [
                     "You really think you can do this?",
                     "Pffft. Try again in another lifetime.",
@@ -77,9 +77,8 @@ class FVNBot(commands.Bot):
                     "Nope, not listening to you.",
                     "Do you really think you can do this? <:nekolinhu:658757071268872202>",
                     "You're not my master!",
-                    "Shiiiiin, they're trying to make me bonk people agaaaain <:pleaseno:694998032457924698>",
                     "You're not my dad! Where is my dad!?",
-                    "Keep this up and I'll bonk you instead <:bonk:711145599009030204>",
+                    "Keep this up and I'll bonk you! <:bonk:711145599009030204>",
                     "I'm telling Nathan!",
                 ]
                 await ctx.send(random.choice(sarcasm))
