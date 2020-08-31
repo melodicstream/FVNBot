@@ -1,5 +1,7 @@
+import asyncio
 import datetime
 import logging
+import random
 import traceback
 
 import discord
@@ -60,9 +62,20 @@ class FVNBot(commands.Bot):
         )
         if not isinstance(error, commands.CommandNotFound):
             await self.channels["logs"].send(f"Command error in {ctx.command}:\n{tb}")
-        if isinstance(error, (commands.CheckFailure, commands.ConversionError)):
+        if isinstance(error, (commands.ConversionError, asyncio.TimeoutError)):
             await self.react_command_error(ctx)
             await ctx.send(str(error))
+        if isinstance(error, commands.CheckFailure):
+            await self.react_command_error(ctx)
+            if random.random() < 0.1:
+                sarcasm = [
+                    "You really think you can do this?",
+                    "Pffft. Try again in another lifetime.",
+                    "I was told to say something sarcastic.",
+                    "Please don't try this command again. It hurts me :(",
+                    "Nope. You can't do that. If you try that again, you get the banana pizza.",
+                ]
+                await ctx.send(random.choice(sarcasm))
 
     @staticmethod
     async def react_command_ok(ctx):

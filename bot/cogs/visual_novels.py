@@ -145,7 +145,7 @@ class VisualNovels(commands.Cog):
         async for message in self.bot.channels["vn_list"].history(limit=None):
             await message.delete()
 
-        for entry in self.db.table(TABLE_VISUAL_NOVEL).all():
+        for entry in sorted(self.db.table(TABLE_VISUAL_NOVEL).all(), key=lambda doc: doc.doc_id):
             vn = VisualNovel(database=self.db)
             vn.load_from_db(doc_id=entry.doc_id)
             await vn.post_to_list(self.bot.channels)
