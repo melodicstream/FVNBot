@@ -233,7 +233,7 @@ class VisualNovels(commands.Cog):
             elif doc["rating"] == -1:
                 downvoted.append(f"{name}")
 
-        embed = discord.Embed(title=f"Ratings by user {ctx.author}")
+        embed = discord.Embed(title=f"Ratings by user {member}")
         embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
 
         if upvoted:
