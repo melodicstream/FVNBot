@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 
 import discord
@@ -16,11 +17,6 @@ class Staff(commands.Cog):
         return self.bot.roles["staff"] in ctx.author.roles
 
     @commands.command()
-    async def close(self, ctx: commands.Context):
-        """Closes the bot safely. Can only be used by the staff."""
-        await self.bot.logout()
-
-    @commands.command()
     async def status(self, ctx: commands.Context, *, status: str):
         """Changes the bot's status. Can only be used by the staff."""
         await self.bot.change_presence(activity=discord.Game(name=status))
@@ -36,8 +32,8 @@ class Staff(commands.Cog):
         await channel.send("https://github.com/melodicstream/FVNBot")
 
     @commands.command()
-    async def source(self, ctx: commands.Context, channel: discord.TextChannel, *, message: str):
-        """This is the link for the database backlup!"""
+    async def backups(self, ctx: commands.Context, channel: discord.TextChannel, *, message: str):
+        """This is the link for the database backups!"""
         await channel.send("https://github.com/melodicstream/FVNBot-backup")
 
     @commands.command()
@@ -83,25 +79,31 @@ class Staff(commands.Cog):
         )
 
     @commands.command()
-    async def megabonk(self, ctx: commands.Context, member: discord.Member):
+    async def megabonk(self, ctx: commands.Context, member: discord.Member, amount: int = 1):
         """Megabonks another person."""
-        await ctx.send(
-            f"{ctx.author.display_name} megabonked user {member.display_name} <:bonk:711145599009030204>"
-        )
 
-    @commands.command(name="reload")
-    async def _reload(self, ctx, *, ext: str = None):
-        """Reloads a module. Can only be used by the staff."""
+        bonk = """
+<:bonk:711145599009030204><:bonk:711145599009030204>                <:bonk:711145599009030204>          <:bonk:711145599009030204>            <:bonk:711145599009030204>     <:bonk:711145599009030204>        <:bonk:711145599009030204>
+<:bonk:711145599009030204>     <:bonk:711145599009030204>     <:bonk:711145599009030204>     <:bonk:711145599009030204>     <:bonk:711145599009030204><:bonk:711145599009030204>      <:bonk:711145599009030204>     <:bonk:711145599009030204>      <:bonk:711145599009030204>
+<:bonk:711145599009030204><:bonk:711145599009030204>          <:bonk:711145599009030204>     <:bonk:711145599009030204>     <:bonk:711145599009030204>      <:bonk:711145599009030204><:bonk:711145599009030204>     <:bonk:711145599009030204><:bonk:711145599009030204>
+<:bonk:711145599009030204>     <:bonk:711145599009030204>     <:bonk:711145599009030204>     <:bonk:711145599009030204>     <:bonk:711145599009030204>            <:bonk:711145599009030204>     <:bonk:711145599009030204>     <:bonk:711145599009030204>
+<:bonk:711145599009030204><:bonk:711145599009030204>                <:bonk:711145599009030204>          <:bonk:711145599009030204>            <:bonk:711145599009030204>     <:bonk:711145599009030204>       <:bonk:711145599009030204>
+        """
 
-        if ext:
-            self.bot.unload_extension(ext)
-            self.bot.load_extension(ext)
-        else:
-            for m in self.bot.custom_extensions:
-                self.bot.unload_extension(m)
-                self.bot.load_extension(m)
+        def interactive_command_check(msg):
+            return msg.author == member and ctx.channel == msg.channel
 
-        await self.bot.react_command_ok(ctx)
+        await ctx.send(embed=discord.Embed(title="Raising the bonk hammer..."))
+
+        for _ in range(amount):
+            try:
+                await self.bot.wait_for('message', timeout=120.0, check=interactive_command_check)
+            except asyncio.TimeoutError:
+                return
+
+            await ctx.send(f"{member.mention}\n{bonk}")
+
+        await ctx.send(embed=discord.Embed(title="Putting the hammer down and returning to normal operation."))
 
 
 def setup(bot):

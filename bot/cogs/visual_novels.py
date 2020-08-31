@@ -160,61 +160,6 @@ class VisualNovels(commands.Cog):
         await self.bot.react_command_ok(ctx)
 
     @commands.command()
-    @commands.check(check_is_staff)
-    async def migrate(self, ctx: commands.Context):
-        """Migrate the votes from the old lists."""
-
-        def interactive_command_check(msg):
-            return msg.author == ctx.author and ctx.channel == msg.channel
-
-        await ctx.send("What VN do you want to migrate? Enter a name or an abbreviation.")
-
-        try:
-            vn_name = await self.bot.wait_for('message', timeout=60.0, check=interactive_command_check)
-        except asyncio.TimeoutError:
-            return await ctx.send('You took long. Aborting.')
-
-        vn_name = vn_name.content.lower()
-        vn = VisualNovel(database=self.db)
-        try:
-            vn.load_from_db(name=vn_name, abbreviations=[vn_name])
-        except FileNotFoundError:
-            return await ctx.send("VN not found.")
-
-        await ctx.send("Please enter the ID of the message with the original votes.")
-
-        try:
-            original_votes_message_id = await self.bot.wait_for('message', timeout=60.0,
-                                                                check=interactive_command_check)
-        except asyncio.TimeoutError:
-            return await ctx.send('You took long. Aborting.')
-
-        original_votes_message_id = int(original_votes_message_id.content)
-
-        old_vn_undetermined = self.bot.guild.get_channel(488386154882793473)
-        old_vn_list = self.bot.guild.get_channel(479777207934517275)
-
-        try:
-            message = await old_vn_undetermined.fetch_message(original_votes_message_id)
-        except:
-            message = await old_vn_list.fetch_message(original_votes_message_id)
-
-        shin_id = 154594175008899072
-        Rating = Query()
-
-        for reaction in message.reactions:
-            async for user in reaction.users():
-                if user.id == shin_id:
-                    continue
-                query = (Rating.member_id == user.id) & (Rating.vn_id == vn.doc_id)
-                if reaction.emoji == "👍":
-                    self.db.table(TABLE_RATING).upsert({"member_id": user.id, "vn_id": vn.doc_id, "rating": 1}, query)
-                if reaction.emoji == "👎":
-                    self.db.table(TABLE_RATING).upsert({"member_id": user.id, "vn_id": vn.doc_id, "rating": -1}, query)
-
-        await ctx.send("VN's votes successfully migrated.")
-
-    @commands.command()
     @commands.check(check_in_botspam)
     async def votes(self, ctx: commands.Context, member: discord.Member = None):
         """Shows the list of all the VNs that the member voted for.
