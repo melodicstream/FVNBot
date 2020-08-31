@@ -150,6 +150,8 @@ class VisualNovels(commands.Cog):
             vn.load_from_db(doc_id=entry.doc_id)
             await vn.post_to_list(self.bot.channels)
 
+        await self.bot.react_command_ok(ctx)
+
     @commands.command()
     @commands.check(check_is_staff)
     async def migrate(self, ctx: commands.Context):
