@@ -223,8 +223,8 @@ class VisualNovels(commands.Cog):
 
         member = member or ctx.author
 
-        upvoted = []
-        downvoted = []
+        upvoted = ["-"]
+        downvoted = ["-"]
 
         for doc in self.db.table(TABLE_RATING).search(where("member_id") == member.id):
             name = self.db.table(TABLE_VISUAL_NOVEL).get(doc_id=doc["vn_id"])["name"]
