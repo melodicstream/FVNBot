@@ -33,7 +33,7 @@ class FVNBot(commands.Bot):
     async def on_ready(self):
         log.info("Logged in as %s", self.user)
 
-        await self.change_presence(activity=discord.Game(name="?help"))
+        await self.change_presence(activity=discord.Game(name="vn.help"))
 
         self.guild = self.get_guild(self.config["guild_id"])
 
