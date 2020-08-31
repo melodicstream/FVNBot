@@ -219,10 +219,10 @@ class VisualNovels(commands.Cog):
         downvoted = []
 
         for doc in self.db.table(TABLE_RATING).search(where("member_id") == member.id):
-            name = self.db.table(TABLE_RATING).get(doc_id=doc["vn_id"])["name"]
+            name = self.db.table(TABLE_VISUAL_NOVEL).get(doc_id=doc["vn_id"])["name"]
             if doc["rating"] == 1:
                 upvoted.append(f"{name}")
-            else:
+            elif doc["rating"] == -1:
                 downvoted.append(f"{name}\n")
 
         message = "```Upvoted```\n{}\n```Downvoted```\n{}".format("\n".join(upvoted), "\n".join(downvoted))
