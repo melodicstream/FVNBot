@@ -223,9 +223,9 @@ class VisualNovels(commands.Cog):
             if doc["rating"] == 1:
                 upvoted.append(f"{name}")
             elif doc["rating"] == -1:
-                downvoted.append(f"{name}\n")
+                downvoted.append(f"{name}")
 
-        message = "```Upvoted```\n{}\n```Downvoted```\n{}".format("\n".join(upvoted), "\n".join(downvoted))
+        message = "```Upvoted```\n{}\n\n```Downvoted```\n{}".format("\n".join(upvoted), "\n".join(downvoted))
 
         await ctx.send(message)
 
