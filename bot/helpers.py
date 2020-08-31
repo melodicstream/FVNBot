@@ -1,5 +1,3 @@
-import re
-
 import discord
 from tinydb import Query, where
 
@@ -54,9 +52,9 @@ class VisualNovel:
 
             embed = message.embeds[0]
 
-            embed.add_field(name="Current Ratings", value=self.calculate_ratings())
-            embed.add_field(name="Abbreviations", value=self.pretty_abbreviations())
-            embed.add_field(name="Android Support", value="Yes" if self.android_support else "No")
+            embed.set_field_at(0, name="Current Ratings", value=self.calculate_ratings())
+            embed.set_field_at(1, name="Abbreviations", value=self.pretty_abbreviations())
+            embed.set_field_at(2, name="Android Support", value="Yes" if self.android_support else "No")
             embed.set_image(url=self.image)
             embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
             embed.set_footer(text=f"{self.name}, by {', '.join(self.authors)}")
@@ -143,7 +141,7 @@ class VisualNovel:
         if name:
             vns = self.db.table(TABLE_VISUAL_NOVEL).search(VN.name.test(lambda s: s.lower() == name.lower()))
 
-        if abbreviations:
+        if not vns and abbreviations:
             vns = self.db.table(TABLE_VISUAL_NOVEL).search(VN.abbreviations.any(abbreviations))
 
         if vns:

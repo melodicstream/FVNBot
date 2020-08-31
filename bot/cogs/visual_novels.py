@@ -26,7 +26,7 @@ class VisualNovels(commands.Cog):
         self.db = TinyDB(self.bot.config["database"], sort_keys=True, indent=4, separators=(",", ": "))
 
     @commands.command()
-    async def search(self, ctx: commands.Context, name: str):
+    async def search(self, ctx: commands.Context, *, name: str):
         """Search for a Visual Novel by name or abbreviation."""
 
         name = name.lower()

@@ -17,7 +17,7 @@ docker build -t fvnbot .
 After that, run it. The important thing is to mount the `/database` folder into an external volume.
 
 ```
-docker run -d --restart unless-stopped --name fvnbot --mount type=bind,source="$(pwd)"/database,target=/app/database fvnbot
+docker run -d --restart unless-stopped --name fvnbot --mount source=fvnbot-database,target=/app/database fvnbot
 ```
 
 It will start a Docker container in daemon mode, and it will always restart unless manually stopped.
