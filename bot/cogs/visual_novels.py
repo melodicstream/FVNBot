@@ -235,7 +235,7 @@ class VisualNovels(commands.Cog):
         """Removes the votes from people that aren't in the server anymore."""
 
         to_remove = [
-            document["member_id"]
+            document.doc_id
             for document in self.db.table(TABLE_RATING).all()
             if not self.bot.guild.get_member(document["member_id"])
         ]
