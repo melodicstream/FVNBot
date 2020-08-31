@@ -312,7 +312,8 @@ class VisualNovels(commands.Cog):
         embed.set_footer(
             text=f"Brought to you by Furry Visual Novels server. Join us for vn-lists, development channels and more. discord.gg/GFjSPkh")
 
-        await self.bot.channels["vn_news"].send("<@&622819741702160387>", embed=embed)
+        msg = await self.bot.channels["vn_news"].send("<@&622819741702160387>", embed=embed)
+        await msg.publish()
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
