@@ -18,6 +18,13 @@ def check_is_staff(ctx: commands.Context):
     return ctx.bot.roles["staff"] in ctx.author.roles
 
 
+def check_in_botspam(ctx: commands.Context):
+    if ctx.guild is None:
+        return False
+
+    return ctx.bot.channels["bot_spam"] == ctx.channel
+
+
 class VisualNovels(commands.Cog):
     """Commands related to managing VNs."""
 
@@ -208,6 +215,7 @@ class VisualNovels(commands.Cog):
         await ctx.send("VN's votes successfully migrated.")
 
     @commands.command()
+    @commands.check(check_in_botspam)
     async def votes(self, ctx: commands.Context, member: discord.Member = None):
         """Shows the list of all the VNs that the member voted for.
         If not given any member, it shows the list of whoever called the command.
@@ -225,9 +233,12 @@ class VisualNovels(commands.Cog):
             elif doc["rating"] == -1:
                 downvoted.append(f"{name}")
 
-        message = "```Upvoted```\n{}\n\n```Downvoted```\n{}".format("\n".join(upvoted), "\n".join(downvoted))
+        embed = discord.Embed(title=f"Ratings by user {ctx.author}")
+        embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
+        embed.add_field(name="👍 Upvoted", value="\n".join(upvoted))
+        embed.add_field(name="👎 Downvoted", value="\n".join(downvoted))
 
-        await ctx.send(message)
+        await ctx.send(embed=embed)
 
     @commands.command()
     @commands.check(check_is_staff)
