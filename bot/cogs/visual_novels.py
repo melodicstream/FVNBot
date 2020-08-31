@@ -223,8 +223,8 @@ class VisualNovels(commands.Cog):
 
         member = member or ctx.author
 
-        upvoted = ["-"]
-        downvoted = ["-"]
+        upvoted = []
+        downvoted = []
 
         for doc in self.db.table(TABLE_RATING).search(where("member_id") == member.id):
             name = self.db.table(TABLE_VISUAL_NOVEL).get(doc_id=doc["vn_id"])["name"]
@@ -235,8 +235,16 @@ class VisualNovels(commands.Cog):
 
         embed = discord.Embed(title=f"Ratings by user {ctx.author}")
         embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
-        embed.add_field(name="👍 Upvoted", value="\n".join(upvoted))
-        embed.add_field(name="👎 Downvoted", value="\n".join(downvoted))
+
+        if upvoted:
+            embed.add_field(name="👍 Upvoted", value="\n".join(upvoted))
+        else:
+            embed.add_field(name="👍 Upvoted", value="------")
+
+        if downvoted:
+            embed.add_field(name="👎 Downvoted", value="\n".join(downvoted))
+        else:
+            embed.add_field(name="👎 Downvoted", value="------")
 
         await ctx.send(embed=embed)
 
