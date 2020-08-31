@@ -231,7 +231,7 @@ class VisualNovels(commands.Cog):
 
     @commands.command()
     @commands.check(check_is_staff)
-    async def cleanleavers(self, ctx: commands.Context, member: discord.Member):
+    async def cleanleavers(self, ctx: commands.Context):
         """Removes the votes from people that aren't in the server anymore."""
 
         to_remove = [
@@ -246,7 +246,7 @@ class VisualNovels(commands.Cog):
 
     @commands.command()
     @commands.check(check_is_staff)
-    async def generatetop10(self, ctx: commands.Context, member: discord.Member):
+    async def generatetop10(self, ctx: commands.Context):
         """Posts the top 10 list of VNs by rating.
         Generates a list of the top 10 VNs in absolute ranks (ups minus downs), clears the top 10 channel and posts the
         new VNs in the channel, sorted by rating.
