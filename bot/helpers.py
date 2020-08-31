@@ -154,5 +154,5 @@ class VisualNovel:
 
     def pretty_abbreviations(self):
         if not self.abbreviations:
-            return ""
+            return "-"
         return ", ".join(self.abbreviations)

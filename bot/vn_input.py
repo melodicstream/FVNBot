@@ -12,7 +12,7 @@ async def input_name(bot, ctx, check):
 
 
 async def input_abbreviations(bot, ctx, check):
-    await ctx.send("What are the abbreviations that this VN will be known for? Enter them separated by spaces. If there are no abbreviations, type \"none\"")
+    await ctx.send("What are the abbreviations that this VN will be known for? Enter them separated by spaces. If there are no abbreviations, type \"none\".")
 
     try:
         abbreviations = await bot.wait_for('message', timeout=60.0, check=check)
