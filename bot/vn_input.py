@@ -8,7 +8,7 @@ async def input_name(bot, ctx, check):
         name = await bot.wait_for('message', timeout=60.0, check=check)
         return name.content
     except asyncio.TimeoutError:
-        return await ctx.send('You took long. Aborting.')
+        raise asyncio.TimeoutError("You took long. Aborting.")
 
 
 async def input_abbreviations(bot, ctx, check):
@@ -22,7 +22,7 @@ async def input_abbreviations(bot, ctx, check):
 
         return [abbreviation.lower() for abbreviation in abbreviations.content.split()]
     except asyncio.TimeoutError:
-        return await ctx.send('You took long. Aborting.')
+        raise asyncio.TimeoutError("You took long. Aborting.")
 
 
 async def input_authors(bot, ctx, check):
@@ -32,7 +32,7 @@ async def input_authors(bot, ctx, check):
         authors = await bot.wait_for('message', timeout=60.0, check=check)
         return [author.strip() for author in authors.content.split(",")]
     except asyncio.TimeoutError:
-        return await ctx.send('You took long. Aborting.')
+        raise asyncio.TimeoutError("You took long. Aborting.")
 
 
 async def input_store(bot, ctx, check):
@@ -42,7 +42,7 @@ async def input_store(bot, ctx, check):
         store = await bot.wait_for('message', timeout=60.0, check=check)
         return store.content
     except asyncio.TimeoutError:
-        return await ctx.send('You took long. Aborting.')
+        raise asyncio.TimeoutError("You took long. Aborting.")
 
 
 async def input_image(bot, ctx, check):
@@ -52,7 +52,7 @@ async def input_image(bot, ctx, check):
         image = await bot.wait_for('message', timeout=60.0, check=check)
         return image.attachments[0].url
     except asyncio.TimeoutError:
-        return await ctx.send('You took long. Aborting.')
+        raise asyncio.TimeoutError("You took long. Aborting.")
 
 
 async def input_android_support(bot, ctx, check):
@@ -62,7 +62,7 @@ async def input_android_support(bot, ctx, check):
         android = await bot.wait_for('message', timeout=60.0, check=check)
         return "yes" in android.content
     except asyncio.TimeoutError:
-        return await ctx.send('You took long. Aborting.')
+        raise asyncio.TimeoutError("You took long. Aborting.")
 
 
 async def input_undetermined(bot, ctx, check):
@@ -72,4 +72,4 @@ async def input_undetermined(bot, ctx, check):
         undetermined = await bot.wait_for('message', timeout=60.0, check=check)
         return "yes" in undetermined.content
     except asyncio.TimeoutError:
-        return await ctx.send('You took long. Aborting.')
+        raise asyncio.TimeoutError("You took long. Aborting.")
