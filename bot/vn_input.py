@@ -12,10 +12,14 @@ async def input_name(bot, ctx, check):
 
 
 async def input_abbreviations(bot, ctx, check):
-    await ctx.send("What are the abbreviations that this VN will be known for? Enter them separated by spaces.")
+    await ctx.send("What are the abbreviations that this VN will be known for? Enter them separated by spaces. If there are no abbreviations, type \"none\"")
 
     try:
         abbreviations = await bot.wait_for('message', timeout=60.0, check=check)
+
+        if abbreviations.content.strip().lower() == "none":
+            return []
+
         return [abbreviation.lower() for abbreviation in abbreviations.content.split()]
     except asyncio.TimeoutError:
         return await ctx.send('You took long. Aborting.')

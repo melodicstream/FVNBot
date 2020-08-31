@@ -18,6 +18,7 @@ class FVNBot(commands.Bot):
         self.guild = None
         self.channels = None
         self.roles = None
+        self.log = log
 
         for extension in self.custom_extensions:
             try:
@@ -58,7 +59,6 @@ class FVNBot(commands.Bot):
             traceback.format_exception(type(error), error, error.__traceback__)
         )
         if not isinstance(error, commands.CommandNotFound):
-            log.error("Command error in %s:\n%s", ctx.command, tb)
             await self.channels["logs"].send(f"Command error in {ctx.command}:\n{tb}")
         if isinstance(error, (commands.CheckFailure, commands.ConversionError)):
             await self.react_command_error(ctx)

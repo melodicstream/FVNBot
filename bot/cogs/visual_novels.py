@@ -69,7 +69,8 @@ class VisualNovels(commands.Cog):
             undetermined=undetermined,
         )
 
-        vn.add_to_db()
+        doc_id = vn.add_to_db()
+        self.bot.log.info("VN added to DB with ID %s", doc_id)
 
         await vn.post_to_list(self.bot.channels)
 
@@ -305,12 +306,10 @@ class VisualNovels(commands.Cog):
             url=url,
         )
         embed.add_field(name="Current Ratings", value=vn.calculate_ratings())
-        embed.add_field(name="Abbreviations", value=", ".join(vn.abbreviations))
+        embed.add_field(name="Abbreviations", value=vn.pretty_abbreviations())
         embed.add_field(name="Android Support", value="Yes" if vn.android_support else "No")
-        embed.set_author(name="FVN Bot",
-                         icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
-        embed.set_footer(
-            text=f"Brought to you by Furry Visual Novels server. Join us for vn-lists, development channels and more. discord.gg/GFjSPkh")
+        embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
+        embed.set_footer(text=f"Brought to you by Furry Visual Novels server. Join us for vn-lists, development channels and more. discord.gg/GFjSPkh")
 
         msg = await self.bot.channels["vn_news"].send("<@&622819741702160387>", embed=embed)
         await msg.publish()

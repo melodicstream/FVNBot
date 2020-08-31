@@ -29,7 +29,7 @@ class VisualNovel:
         )
 
         embed.add_field(name="Current Ratings", value=self.calculate_ratings())
-        embed.add_field(name="Abbreviations", value=", ".join(self.abbreviations))
+        embed.add_field(name="Abbreviations", value=self.pretty_abbreviations())
         embed.add_field(name="Android Support", value="Yes" if self.android_support else "No")
         embed.set_image(url=self.image)
         embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
@@ -55,7 +55,7 @@ class VisualNovel:
             embed = message.embeds[0]
 
             embed.add_field(name="Current Ratings", value=self.calculate_ratings())
-            embed.add_field(name="Abbreviations", value=", ".join(self.abbreviations))
+            embed.add_field(name="Abbreviations", value=self.pretty_abbreviations())
             embed.add_field(name="Android Support", value="Yes" if self.android_support else "No")
             embed.set_image(url=self.image)
             embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
@@ -101,6 +101,7 @@ class VisualNovel:
             "undetermined": self.undetermined,
             "message_id": None
         })
+        return self.doc_id
 
     def update_to_db(self):
         VN = Query()
@@ -150,3 +151,8 @@ class VisualNovel:
             return
 
         raise FileNotFoundError("No VN Found.")
+
+    def pretty_abbreviations(self):
+        if not self.abbreviations:
+            return ""
+        return ", ".join(self.abbreviations)
