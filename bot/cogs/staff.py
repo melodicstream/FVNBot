@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import random
 
 import discord
 from discord.ext import commands
@@ -74,13 +75,20 @@ class Staff(commands.Cog):
     @commands.command()
     async def bonk(self, ctx: commands.Context, member: discord.Member):
         """Bonks another person."""
+
+        if member.id == 154594175008899072:
+            return await self._dont_bonk_shin(ctx)
+
         await ctx.send(
-            f"{ctx.author.display_name} bonked user {member.display_name} <:bonk:711145599009030204>"
+            f"{ctx.author.display_name} bonked {member.display_name}!   <:bonk:711145599009030204>"
         )
 
     @commands.command()
     async def megabonk(self, ctx: commands.Context, member: discord.Member, amount: int = 1):
         """Megabonks another person."""
+
+        if member.id == 154594175008899072:
+            return await self._dont_bonk_shin(ctx)
 
         bonk = """
 <:bonk:711145599009030204><:bonk:711145599009030204>                <:bonk:711145599009030204>          <:bonk:711145599009030204>            <:bonk:711145599009030204>     <:bonk:711145599009030204>        <:bonk:711145599009030204>
@@ -97,13 +105,25 @@ class Staff(commands.Cog):
 
         for _ in range(amount):
             try:
-                await self.bot.wait_for('message', timeout=120.0, check=interactive_command_check)
+                await self.bot.wait_for('message', timeout=60.0 * 10, check=interactive_command_check)
             except asyncio.TimeoutError:
                 return
 
             await ctx.send(f"{member.mention}\n{bonk}")
 
         await ctx.send(embed=discord.Embed(title="Putting the hammer down and returning to normal operation."))
+
+    async def _dont_bonk_shin(self, ctx: commands.Context):
+        await self.bot.react_command_error(ctx)
+
+        messages = [
+            "I... I can't do this!",
+            "I refuse!",
+            "I can't hurt Shin!",
+            "H-He's my dad!",
+            "Well that's not a nice thing to ask...",
+        ]
+        await ctx.send(random.choice(messages))
 
 
 def setup(bot):
