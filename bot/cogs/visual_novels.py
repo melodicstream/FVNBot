@@ -85,6 +85,29 @@ class VisualNovels(commands.Cog):
 
     @commands.command()
     @commands.check(check_is_staff)
+    async def delete(self, ctx: commands.Context, *, name: str):
+        """Delete a Visual Novel from the database."""
+
+        name = name.lower()
+
+        vn = VisualNovel(database=self.db)
+
+        try:
+            vn.load_from_db(name=name, abbreviations=[name])
+        except FileNotFoundError:
+            return await ctx.send("VN not found.")
+
+        channel = self.bot.channels["vn_undetermined" if vn.undetermined else "vn_list"]
+        message = await channel.fetch_message(vn.message_id)
+        await message.delete()
+
+        self.db.table(TABLE_VISUAL_NOVEL).remove(doc_ids=[vn.doc_id])
+        self.db.table(TABLE_RATING).remove(where("vn_id") == vn.doc_id)
+
+        await ctx.send(f"The VN {vn.name} got successfully deleted!")
+
+    @commands.command()
+    @commands.check(check_is_staff)
     async def edit(self, ctx: commands.Context):
         """Edits the information about a VN."""
 
