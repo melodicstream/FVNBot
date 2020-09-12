@@ -1,6 +1,6 @@
 import contextlib
-import json
 import logging
+import os
 
 from discord.ext import commands
 
@@ -39,15 +39,11 @@ def setup_logging():
 
 
 def main():
-    with open("config.json") as f:
-        config = json.load(f)
-
     with setup_logging():
         bot = FVNBot(
-            command_prefix=commands.when_mentioned_or(*config["prefixes"]),
-            config=config,
+            command_prefix=commands.when_mentioned_or(os.getenv("FVNBOT_PREFIX")),
         )
-        bot.run(config["token"])
+        bot.run(os.getenv("FVNBOT_TOKEN"))
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ class VisualNovels(commands.Cog):
 
     def __init__(self, bot: FVNBot):
         self.bot = bot
-        self.db = TinyDB(self.bot.config["database"], sort_keys=True, indent=4, separators=(",", ": "))
+        self.db = TinyDB(self.bot.database_path, sort_keys=True, indent=4, separators=(",", ": "))
 
     @commands.command()
     async def search(self, ctx: commands.Context, *, name: str):
@@ -204,17 +204,22 @@ class VisualNovels(commands.Cog):
         embed = discord.Embed(title=f"Ratings by user {member}")
         embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
 
-        if upvoted:
-            embed.add_field(name="👍 Upvoted", value="\n".join(upvoted))
-        else:
-            embed.add_field(name="👍 Upvoted", value="------")
+        embed.add_field(name="👍 Upvoted", value="\n".join(upvoted) if upvoted else "------")
+        embed.add_field(name="👎 Downvoted", value="\n".join(downvoted) if downvoted else "------")
 
-        if downvoted:
-            embed.add_field(name="👎 Downvoted", value="\n".join(downvoted))
-        else:
-            embed.add_field(name="👎 Downvoted", value="------")
+        try:
+            await ctx.send(embed=embed)
+        except discord.HTTPException:
+            # embed is too big, send two instead
+            embed = discord.Embed(title=f"Ratings by user {member}")
+            embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
+            embed.add_field(name="👍 Upvoted", value="\n".join(upvoted) if upvoted else "------")
+            await ctx.send(embed=embed)
 
-        await ctx.send(embed=embed)
+            embed = discord.Embed(title=f"Ratings by user {member}")
+            embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
+            embed.add_field(name="👎 Downvoted", value="\n".join(downvoted) if downvoted else "------")
+            await ctx.send(embed=embed)
 
     @commands.command()
     @commands.check(check_is_staff)
@@ -297,10 +302,11 @@ class VisualNovels(commands.Cog):
         embed.add_field(name="Current Ratings", value=vn.calculate_ratings())
         embed.add_field(name="Abbreviations", value=vn.pretty_abbreviations())
         embed.add_field(name="Android Support", value="Yes" if vn.android_support else "No")
+        embed.set_image(url=vn.image)
         embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
         embed.set_footer(text=f"Brought to you by Furry Visual Novels server. Join us for vn-lists, development channels and more. discord.gg/GFjSPkh")
 
-        msg = await self.bot.channels["vn_news"].send("<@&622819741702160387>", embed=embed)
+        msg = await self.bot.channels["vn_news"].send(f"<@&{self.bot.roles['update_notification']}>", embed=embed)
         await msg.publish()
 
     @commands.Cog.listener()

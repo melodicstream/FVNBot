@@ -1,8 +1,8 @@
 import asyncio
 import datetime
 import logging
+import os
 import random
-import traceback
 
 import discord
 from discord.ext import commands
@@ -10,76 +10,75 @@ from discord.ext import commands
 log = logging.getLogger(__name__)
 
 
+def env_int(name: str) -> int:
+    return int(os.getenv(name))
+
+
 class FVNBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.uptime = datetime.datetime.utcnow()
-        self.config = kwargs["config"]
-        self.custom_extensions = self.config["extensions"]
+        self.custom_extensions = [
+            "bot.cogs.staff",
+            "bot.cogs.visual_novels"
+        ]
         self.guild = None
         self.channels = None
         self.roles = None
+        self.database_path = os.getenv("FVNBOT_DATABASE")
         self.log = log
 
         for extension in self.custom_extensions:
             try:
                 self.load_extension(extension)
             except Exception as e:  # noqa
-                log.error(
-                    "Failed to load extension %s\n%s: %s",
-                    extension,
-                    type(e).__name__,
-                    e,
-                )
+                log.error("Failed to load extension %s\n%s: %s", extension, type(e).__name__, e)
 
     async def on_ready(self):
         log.info("Logged in as %s", self.user)
 
-        await self.change_presence(activity=discord.Game(name="vn.help"))
+        await self.change_presence(activity=discord.Game(name=f"{os.getenv('FVNBOT_PREFIX')}help"))
 
-        self.guild = self.get_guild(self.config["guild_id"])
+        self.guild = self.get_guild(env_int("FVNBOT_GUILD_ID"))
 
         self.channels = {
-            "vn_list": self.guild.get_channel(self.config["channels"]["vn_list"]),
-            "vn_undetermined": self.guild.get_channel(self.config["channels"]["vn_undetermined"]),
-            "vn_news": self.guild.get_channel(self.config["channels"]["vn_news"]),
-            "top10": self.guild.get_channel(self.config["channels"]["top10"]),
-            "logs": self.guild.get_channel(self.config["channels"]["logs"]),
-            "bot_spam": self.guild.get_channel(self.config["channels"]["bot_spam"]),
+            "vn_list": self.guild.get_channel(env_int("FVNBOT_CHANNEL_VN_LIST")),
+            "vn_undetermined": self.guild.get_channel(env_int("FVNBOT_CHANNEL_VN_UNDETERMINED")),
+            "vn_news": self.guild.get_channel(env_int("FVNBOT_CHANNEL_VN_NEWS")),
+            "top10": self.guild.get_channel(env_int("FVNBOT_CHANNEL_TOP10")),
+            "logs": self.guild.get_channel(env_int("FVNBOT_CHANNEL_LOGS")),
+            "bot_spam": self.guild.get_channel(env_int("FVNBOT_CHANNEL_BOT_SPAM")),
         }
 
         self.roles = {
-            "staff": self.guild.get_role(self.config["roles"]["staff"]),
+            "staff": self.guild.get_role(env_int("FVNBOT_ROLE_STAFF")),
+            "update_notification": self.guild.get_role(env_int("FVNBOT_ROLE_UPDATE_NOTIFICATION")),
         }
 
     async def on_command(self, ctx):
         await self.channels["logs"].send(f"{ctx.author} in #{ctx.channel}: {ctx.message.content}")
 
     async def on_command_error(self, ctx: commands.Context, error):
-        tb = "".join(
-            traceback.format_exception(type(error), error, error.__traceback__)
-        )
-        if not isinstance(error, commands.CommandNotFound):
-            await self.channels["logs"].send(f"Command error in {ctx.command}:\n{tb}")
+        await self.react_command_error(ctx)
+        if not isinstance(error, commands.CommandNotFound) and ctx.command not in ["bonk", "megabonk"]:
+            await self.channels["logs"].send(f"Command error in {ctx.command}: {error}")
         if isinstance(error, (commands.ConversionError, asyncio.TimeoutError)):
-            await self.react_command_error(ctx)
             await ctx.send(str(error))
-        if isinstance(error, commands.CheckFailure):
-            await self.react_command_error(ctx)
-            if random.random() <= 0.25:
-                sarcasm = [
-                    "Nope, not listening to you.",
-                    "Do you really think you can do this? <:nekolinhu:658757071268872202>"
-                    "You're not my master!",
-                    "Shiiiiin, they're trying to use the bot commands agaaaain <:pleaseno:694998032457924698>",
-                    "You're not my dad! Where is my dad!?",
-                    "Keep this up and I'll bonk you instead <:bonk:711145599009030204>",
-                    "I'm telling Nathan!",
-                    "You can't do this!",
-                    "I was told to say something sarcastic",
-                ]
-                await ctx.send(random.choice(sarcasm))
+        if isinstance(error, commands.CheckFailure) and random.random() <= 0.4:
+            sarcasm = [
+                "Nope, not listening to you.",
+                "Do you really think you can do this? <:nekolinhu:658757071268872202>"
+                "You're not my master!",
+                "Shiiiiin, they're trying to use the bot commands agaaaain <:pleaseno:694998032457924698>",
+                "You're not my dad! Where is my dad!?",
+                "Keep this up and I'll bonk you instead <:bonk:711145599009030204>",
+                "I'm telling Nathan!",
+                "You can't do this!",
+                "I was told to say something sarcastic.",
+                "Command usage not authorized. This incident will be reported to Santa Claus.",
+            ]
+            await ctx.send(random.choice(sarcasm))
 
     @staticmethod
     async def react_command_ok(ctx):

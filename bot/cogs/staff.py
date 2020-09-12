@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import json
 import random
 
 import discord
@@ -73,6 +74,32 @@ class Staff(commands.Cog):
         )
 
     @commands.command()
+    async def embedpost(self, ctx: commands.Context, channel: discord.TextChannel, *, data: str):
+        """Posts an embed to a certain channel."""
+
+        embed = discord.Embed.from_dict(json.loads(data))
+        await channel.send(embed=embed)
+
+    @commands.command()
+    async def embedget(self, ctx: commands.Context, channel: discord.TextChannel, message_id: int):
+        """Gets an embed from a certain channel and message. Returned in JSON format."""
+
+        message = await channel.fetch_message(message_id)
+        embed = message.embeds[0]
+        data = json.dumps(embed.to_dict(), sort_keys=True, indent=4)
+
+        await ctx.send(data)
+
+    @commands.command()
+    async def embededit(self, ctx: commands.Context, channel: discord.TextChannel, message_id: int, *, data: str):
+        """Edits an already existing embed via JSON format."""
+
+        embed = discord.Embed.from_dict(json.loads(data))
+
+        message = await channel.fetch_message(message_id)
+        await message.edit(embed=embed)
+
+    @commands.command()
     async def bonk(self, ctx: commands.Context, member: discord.Member):
         """Bonks another person."""
 
@@ -82,6 +109,9 @@ class Staff(commands.Cog):
         await ctx.send(
             f"{ctx.author.display_name} bonked {member.display_name}!   <:bonk:711145599009030204>"
         )
+
+        if member.id == 129819557115199488 and random.random() < 0.2:
+            return await self._dont_bonk_melo(ctx)
 
     @commands.command()
     async def megabonk(self, ctx: commands.Context, member: discord.Member, amount: int = 1):
@@ -113,6 +143,9 @@ class Staff(commands.Cog):
 
         await ctx.send(embed=discord.Embed(title="Putting the hammer down and returning to normal operation."))
 
+        if member.id == 129819557115199488 and random.random() < 0.2:
+            return await self._dont_bonk_melo(ctx)
+
     async def _dont_bonk_shin(self, ctx: commands.Context):
         await self.bot.react_command_error(ctx)
 
@@ -122,6 +155,16 @@ class Staff(commands.Cog):
             "I can't hurt Shin!",
             "H-He's my dad!",
             "Well that's not a nice thing to ask...",
+        ]
+        await ctx.send(random.choice(messages))
+
+    async def _dont_bonk_melo(self, ctx: commands.Context):
+        messages = [
+            "There. Are you happy now? YOU FUCKING OBLITERATED THE MELO!!!",
+            "Melo's just a poor boy from a poor family! Spare his head from this monstrosity!",
+            "Maybe if we bonk Melo enough he'll forget that banana pizza was ever a thing...",
+            "Uh... is it normal if his head has a slight dent after the bonk?",
+            "This bonk made a different sound than the others... Better bonk again to make sure!",
         ]
         await ctx.send(random.choice(messages))
 
