@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import io
 import json
 import random
 
@@ -74,27 +75,33 @@ class Staff(commands.Cog):
         )
 
     @commands.command()
-    async def embedpost(self, ctx: commands.Context, channel: discord.TextChannel, *, data: str):
+    async def embedpost(self, ctx: commands.Context, channel: discord.TextChannel):
         """Posts an embed to a certain channel."""
 
-        embed = discord.Embed.from_dict(json.loads(data))
+        file = await ctx.message.attachments[0].to_file()
+        embed = discord.Embed.from_dict(json.load(file))
         await channel.send(embed=embed)
 
     @commands.command()
     async def embedget(self, ctx: commands.Context, channel: discord.TextChannel, message_id: int):
-        """Gets an embed from a certain channel and message. Returned in JSON format."""
+        """Gets an embed from a certain channel and message.
+
+        Returned in JSON format.
+        """
 
         message = await channel.fetch_message(message_id)
         embed = message.embeds[0]
-        data = json.dumps(embed.to_dict(), sort_keys=True, indent=4)
 
-        await ctx.send(data)
+        with io.StringIO() as f:
+            json.dump(f, embed.to_dict(), sort_keys=True, indent=4)
+            await ctx.send(file=f)
 
     @commands.command()
-    async def embededit(self, ctx: commands.Context, channel: discord.TextChannel, message_id: int, *, data: str):
+    async def embededit(self, ctx: commands.Context, channel: discord.TextChannel, message_id: int):
         """Edits an already existing embed via JSON format."""
 
-        embed = discord.Embed.from_dict(json.loads(data))
+        file = await ctx.message.attachments[0].to_file()
+        embed = discord.Embed.from_dict(json.load(file))
 
         message = await channel.fetch_message(message_id)
         await message.edit(embed=embed)
