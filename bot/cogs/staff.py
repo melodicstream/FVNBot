@@ -95,6 +95,7 @@ class Staff(commands.Cog):
         with io.StringIO() as f:
             content = json.dumps(embed.to_dict(), sort_keys=True, indent=4)
             f.write(content)
+            f.seek(0)
             file = discord.File(f, filename="embedget.txt")
             await ctx.send(file=file)
 
