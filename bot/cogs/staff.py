@@ -79,7 +79,7 @@ class Staff(commands.Cog):
         """Posts an embed to a certain channel."""
 
         file = await ctx.message.attachments[0].to_file()
-        embed = discord.Embed.from_dict(json.load(file))
+        embed = discord.Embed.from_dict(json.load(file.fp))
         await channel.send(embed=embed)
 
     @commands.command()
@@ -104,7 +104,7 @@ class Staff(commands.Cog):
         """Edits an already existing embed via JSON format."""
 
         file = await ctx.message.attachments[0].to_file()
-        embed = discord.Embed.from_dict(json.load(file))
+        embed = discord.Embed.from_dict(json.load(file.fp))
 
         message = await channel.fetch_message(message_id)
         await message.edit(embed=embed)
