@@ -93,7 +93,8 @@ class Staff(commands.Cog):
         embed = message.embeds[0]
 
         with io.StringIO() as f:
-            json.dump(f, embed.to_dict(), sort_keys=True, indent=4)
+            content = json.dumps(embed.to_dict(), sort_keys=True, indent=4)
+            f.write(content)
             await ctx.send(file=f)
 
     @commands.command()
