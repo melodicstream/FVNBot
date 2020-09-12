@@ -95,7 +95,8 @@ class Staff(commands.Cog):
         with io.StringIO() as f:
             content = json.dumps(embed.to_dict(), sort_keys=True, indent=4)
             f.write(content)
-            await ctx.send(file=f)
+            file = discord.File(f, filename="embedget.txt")
+            await ctx.send(file=file)
 
     @commands.command()
     async def embededit(self, ctx: commands.Context, channel: discord.TextChannel, message_id: int):
