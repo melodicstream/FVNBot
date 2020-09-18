@@ -69,15 +69,21 @@ class FVNBot(commands.Bot):
         if isinstance(error, commands.CheckFailure) and random.random() <= 0.4:
             sarcasm = [
                 "Nope, not listening to you.",
-                "Do you really think you can do this? <:nekolinhu:658757071268872202>"
+                "Do you really think you can do this? <:nekolinhu:658757071268872202>",
                 "You're not my master!",
                 "Shiiiiin, they're trying to use the bot commands agaaaain <:pleaseno:694998032457924698>",
                 "You're not my dad! Where is my dad!?",
-                "Keep this up and I'll bonk you instead <:bonk:711145599009030204>",
-                "I'm telling Nathan!",
+                "Keep this up and I'll bonk you! <:bonk:711145599009030204>",
                 "You can't do this!",
                 "I was told to say something sarcastic.",
                 "Command usage not authorized. This incident will be reported to Santa Claus.",
+                "Are you sure you should be doing this? <:bonk:756470696304967731>",
+                "I'm calling Chase next time!",
+                "I'm calling Shin next time!",
+                "<:squint:756472317680549919>",
+                "Nope!",
+                "Please don't use commands you're not supposed to...",
+                "I'm telling the cops! <@154594175008899072>",
             ]
             await ctx.send(random.choice(sarcasm))
 
