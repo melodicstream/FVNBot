@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  fvnbot:
+    build: '.'
+    env_file: '.env'
+    restart: 'unless-stopped'
+    volumes:
+    - type: 'volume'
+      source: 'fvnbot-database'
+      target: '/app/database'
+
+
+volumes:
+  fvnbot-database:
