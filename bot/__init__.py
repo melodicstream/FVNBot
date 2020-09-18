@@ -20,7 +20,7 @@ class FVNBot(commands.Bot):
 
         self.uptime = datetime.datetime.utcnow()
         self.custom_extensions = [
-            "bot.cogs.staff",
+            "bot.cogs.bot_manager",
             "bot.cogs.visual_novels"
         ]
         self.guild = None
@@ -53,6 +53,7 @@ class FVNBot(commands.Bot):
 
         self.roles = {
             "staff": self.guild.get_role(env_int("FVNBOT_ROLE_STAFF")),
+            "bot_manager": self.guild.get_role(env_int("FVNBOT_ROLE_BOT_MANAGER")),
             "update_notification": self.guild.get_role(env_int("FVNBOT_ROLE_UPDATE_NOTIFICATION")),
         }
 
@@ -80,10 +81,15 @@ class FVNBot(commands.Bot):
             ]
             await ctx.send(random.choice(sarcasm))
 
+    async def on_command_completion(self, ctx: commands.Context):
+        await self.react_command_ok(ctx)
+
     @staticmethod
     async def react_command_ok(ctx):
+        await ctx.message.clear_reactions()
         await ctx.message.add_reaction("👌")
 
     @staticmethod
     async def react_command_error(ctx):
+        await ctx.message.clear_reactions()
         await ctx.message.add_reaction("❌")
