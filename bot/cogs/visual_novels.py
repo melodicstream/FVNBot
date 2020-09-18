@@ -294,9 +294,11 @@ class VisualNovels(commands.Cog):
             return await ctx.send('You took long. Aborting.')
         title = title.content
 
+        title = f"{vn.name}: {title}"
+
         embed = discord.Embed(
             colour=discord.Colour.blurple(),
-            title=f"{vn.name}: {title}",
+            title=title,
             url=url,
         )
         embed.add_field(name="Current Ratings", value=vn.calculate_ratings())
@@ -306,7 +308,7 @@ class VisualNovels(commands.Cog):
         embed.set_author(name="FVN Bot", icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png")
         embed.set_footer(text=f"Brought to you by Furry Visual Novels server. Join us for vn-lists, development channels and more. discord.gg/GFjSPkh")
 
-        msg = await self.bot.channels["vn_news"].send(f"{self.bot.roles['update_notification'].mention}", embed=embed)
+        msg = await self.bot.channels["vn_news"].send(f"{title}\n{self.bot.roles['update_notification'].mention}", embed=embed)
         await msg.publish()
 
     @commands.Cog.listener()
