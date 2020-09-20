@@ -21,7 +21,7 @@ class BotManager(commands.Cog):
     async def ban(self, ctx: commands.Context, member: discord.Member):
         """Bans another person."""
         await ctx.send(
-            f"{ctx.author} banned user {member}    <a:banned:757051327175065631>"
+            f"{ctx.author} banned user {member}    <a:banned:757051989388689529>"
         )
 
     @commands.command()
