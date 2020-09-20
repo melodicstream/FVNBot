@@ -18,13 +18,6 @@ class BotManager(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def ban(self, ctx: commands.Context, member: discord.Member):
-        """Bans another person."""
-        await ctx.send(
-            f"{ctx.author} banned user {member}    <a:banned:757051989388689529>"
-        )
-
-    @commands.command()
     @commands.check(check_is_bot_manager)
     async def status(self, ctx: commands.Context, *, status: str):
         """Changes the bot's status. Can only be used by the bot managers."""
@@ -56,12 +49,10 @@ class BotManager(commands.Cog):
 
     @commands.command()
     @commands.check(check_is_bot_manager)
-    async def cleanup(self, ctx: commands.Context, limit=None):
+    async def cleanup(self, ctx: commands.Context, limit=10):
         """Deletes the bot's messages for cleanup.
         You can specify how many messages to look for.
         """
-
-        limit = limit or 10
 
         def is_me(m):
             return m.author.id == self.bot.user.id
