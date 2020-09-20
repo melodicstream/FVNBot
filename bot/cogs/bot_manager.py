@@ -18,6 +18,13 @@ class BotManager(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    async def ban(self, ctx: commands.Context, member: discord.Member):
+        """Bans another person."""
+        await ctx.send(
+            f"{ctx.author} banned user {member}    <a:banned:757051327175065631>"
+        )
+
+    @commands.command()
     @commands.check(check_is_bot_manager)
     async def status(self, ctx: commands.Context, *, status: str):
         """Changes the bot's status. Can only be used by the bot managers."""
