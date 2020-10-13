@@ -2,6 +2,7 @@ import contextlib
 import logging
 import os
 
+import discord
 from discord.ext import commands
 
 from bot import FVNBot
@@ -39,9 +40,13 @@ def setup_logging():
 
 
 def main():
+    intents = discord.Intents.default()
+    intents.members = True
+
     with setup_logging():
         bot = FVNBot(
             command_prefix=commands.when_mentioned_or(os.getenv("FVNBOT_PREFIX")),
+            intents=intents,
         )
         bot.run(os.getenv("FVNBOT_TOKEN"))
 
