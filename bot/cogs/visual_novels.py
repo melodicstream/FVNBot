@@ -41,7 +41,7 @@ class VisualNovels(commands.Cog):
 
         channel = self.bot.channels["vn_undetermined" if vn.undetermined else "vn_list"]
         message = await channel.fetch_message(vn.message_id)
-        await ctx.send(f"The VN {vn.name} can be found at {message.jump_url}")
+        await ctx.reply(f"The VN {vn.name} can be found at {message.jump_url}")
 
     @commands.command()
     @commands.check(check_is_bot_manager)
@@ -75,7 +75,7 @@ class VisualNovels(commands.Cog):
 
         await vn.post_to_list(self.bot.channels)
 
-        await ctx.send("VN added successfully!")
+        await ctx.reply("VN added successfully!")
 
     @commands.command()
     @commands.check(check_is_bot_manager)
@@ -89,7 +89,7 @@ class VisualNovels(commands.Cog):
         try:
             vn.load_from_db(name=name, abbreviations=[name])
         except FileNotFoundError:
-            return await ctx.send("VN not found.")
+            return await ctx.reply("VN not found.")
 
         channel = self.bot.channels["vn_undetermined" if vn.undetermined else "vn_list"]
         message = await channel.fetch_message(vn.message_id)
@@ -98,7 +98,7 @@ class VisualNovels(commands.Cog):
         self.db.table(TABLE_VISUAL_NOVEL).remove(doc_ids=[vn.doc_id])
         self.db.table(TABLE_RATING).remove(where("vn_id") == vn.doc_id)
 
-        await ctx.send(f"The VN {vn.name} got successfully deleted!")
+        await ctx.reply(f"The VN {vn.name} got successfully deleted!")
 
     @commands.command()
     @commands.check(check_is_staff)
@@ -108,22 +108,22 @@ class VisualNovels(commands.Cog):
         def interactive_command_check(msg):
             return msg.author == ctx.author and ctx.channel == msg.channel
 
-        await ctx.send("What VN do you want to edit? Enter a name or an abbreviation.")
+        await ctx.reply("What VN do you want to edit? Enter a name or an abbreviation.")
 
         try:
             vn_name = await self.bot.wait_for("message", timeout=60.0, check=interactive_command_check)
         except asyncio.TimeoutError:
-            return await ctx.send("You took long. Aborting.")
+            return await ctx.reply("You took long. Aborting.")
 
         vn_name = vn_name.content.lower()
         vn = VisualNovel(database=self.db)
         try:
             vn.load_from_db(name=vn_name, abbreviations=[vn_name])
         except FileNotFoundError:
-            return await ctx.send("VN not found.")
+            return await ctx.reply("VN not found.")
 
-        await ctx.send(
-            """What do you want to edit about the VN? Input the corresponding number.
+        await ctx.reply(
+            f"""What do you want to edit about the VN "{vn.name}"? Input the corresponding number.
         1. Name
         2. Abbreviations
         3. Authors
@@ -137,7 +137,7 @@ class VisualNovels(commands.Cog):
         try:
             choice = await self.bot.wait_for("message", timeout=60.0, check=interactive_command_check)
         except asyncio.TimeoutError:
-            return await ctx.send("You took long. Aborting.")
+            return await ctx.reply("You took long. Aborting.")
         choice = int(choice.content.strip())
 
         if choice == 1:
@@ -158,7 +158,7 @@ class VisualNovels(commands.Cog):
         vn.update_to_db()
         await vn.update_to_list(self.bot.channels)
 
-        await ctx.send("VN updated successfully.")
+        await ctx.reply(f"VN {vn.name} updated successfully.")
 
     @commands.command()
     @commands.check(check_is_bot_manager)
@@ -205,7 +205,7 @@ class VisualNovels(commands.Cog):
         embed.add_field(name="👎 Downvoted", value="\n".join(downvoted) if downvoted else "------")
 
         try:
-            await ctx.send(embed=embed)
+            await ctx.reply(embed=embed)
         except discord.HTTPException:
             # embed is too big, send two instead
             embed = discord.Embed(title=f"Ratings by user {member}")
@@ -214,7 +214,7 @@ class VisualNovels(commands.Cog):
                 icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png",
             )
             embed.add_field(name="👍 Upvoted", value="\n".join(upvoted) if upvoted else "------")
-            await ctx.send(embed=embed)
+            await ctx.reply(embed=embed)
 
             embed = discord.Embed(title=f"Ratings by user {member}")
             embed.set_author(
@@ -222,7 +222,7 @@ class VisualNovels(commands.Cog):
                 icon_url="https://media.discordapp.net/attachments/729276573496246304/747178571834982431/bonkshinbookmirrored.png",
             )
             embed.add_field(name="👎 Downvoted", value="\n".join(downvoted) if downvoted else "------")
-            await ctx.send(embed=embed)
+            await ctx.reply(embed=embed)
 
     @commands.command()
     @commands.check(check_is_bot_manager)
@@ -237,27 +237,7 @@ class VisualNovels(commands.Cog):
 
         self.db.table(TABLE_RATING).remove(doc_ids=to_remove)
 
-        await ctx.send(f"{len(to_remove)} leavers removed from the votes! Don't forget to run the `rebuild` command.")
-
-    @commands.command()
-    @commands.check(check_is_bot_manager)
-    async def generatetop10(self, ctx: commands.Context):
-        """Posts the top 10 list of VNs by rating.
-        Generates a list of the top 10 VNs in absolute ranks (ups minus downs), clears the top 10 channel and posts the
-        new VNs in the channel, sorted by rating.
-        """
-
-        return await ctx.send("Currently unimplemented.")
-
-        counter = Counter()
-
-        for doc in self.db.table(TABLE_RATING).all():
-            counter[doc["vn_id"]] += doc["rating"]
-
-        top_10 = counter.most_common(10)
-
-        for vn_id, rating in top_10:
-            pass
+        await ctx.reply(f"{len(to_remove)} leavers removed from the votes! Don't forget to run the `rebuild` command.")
 
     @commands.command()
     @commands.check(check_is_staff)
@@ -267,34 +247,34 @@ class VisualNovels(commands.Cog):
         def interactive_command_check(msg):
             return msg.author == ctx.author and ctx.channel == msg.channel
 
-        await ctx.send("What VN do you want to publish an update? Enter a name or an abbreviation.")
+        await ctx.reply("What VN do you want to publish an update? Enter a name or an abbreviation.")
 
         try:
             vn_name = await self.bot.wait_for("message", timeout=60.0, check=interactive_command_check)
         except asyncio.TimeoutError:
-            return await ctx.send("You took long. Aborting.")
+            return await ctx.reply("You took long. Aborting.")
 
         vn_name = vn_name.content.lower()
         vn = VisualNovel(database=self.db)
         try:
             vn.load_from_db(name=vn_name, abbreviations=[vn_name])
         except FileNotFoundError:
-            return await ctx.send("VN not found.")
+            return await ctx.reply("VN not found.")
 
-        await ctx.send("What is the URL to the update?")
+        await ctx.reply("What is the URL to the update?")
 
         try:
             url = await self.bot.wait_for("message", timeout=60.0, check=interactive_command_check)
         except asyncio.TimeoutError:
-            return await ctx.send("You took long. Aborting.")
+            return await ctx.reply("You took long. Aborting.")
         url = url.content
 
-        await ctx.send("What is the title of the update?")
+        await ctx.reply("What is the title of the update?")
 
         try:
             title = await self.bot.wait_for("message", timeout=60.0, check=interactive_command_check)
         except asyncio.TimeoutError:
-            return await ctx.send("You took long. Aborting.")
+            return await ctx.reply("You took long. Aborting.")
         title = title.content
 
         title = f"{vn.name}: {title}"

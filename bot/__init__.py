@@ -65,7 +65,7 @@ class FVNBot(commands.Bot):
         if not isinstance(error, commands.CommandNotFound) and ctx.command not in ["bonk", "megabonk"]:
             await self.channels["logs"].send(f"Command error in {ctx.command}: {error}")
         if isinstance(error, (commands.ConversionError, asyncio.TimeoutError)):
-            await ctx.send(str(error))
+            await ctx.reply(str(error))
         if isinstance(error, commands.CheckFailure) and random.random() <= 0.4:
             sarcasm = [
                 "Nope, not listening to you.",
@@ -85,7 +85,7 @@ class FVNBot(commands.Bot):
                 "Please don't use commands you're not supposed to...",
                 "I'm telling the cops! <@154594175008899072>",
             ]
-            await ctx.send(random.choice(sarcasm))
+            await ctx.reply(random.choice(sarcasm))
 
     async def on_command_completion(self, ctx: commands.Context):
         await self.react_command_ok(ctx)
